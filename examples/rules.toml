@@ -1,0 +1,14 @@
+[[rules]]
+label = "bug"
+title_contains = ["crash", "error", "exception"]
+body_contains = ["traceback", "stack trace"]
+match = "any"
+
+[[rules]]
+label = "dependencies"
+author_is = ["dependabot[bot]", "renovate[bot]"]
+
+[[rules]]
+label = "needs-info"
+body_contains = ["to reproduce", "steps"]
+match = "all"

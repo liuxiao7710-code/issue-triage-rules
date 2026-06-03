@@ -1,0 +1,6 @@
+{
+  "title": "Crash when config is empty",
+  "body": "The stack trace points to config parsing.",
+  "author": "alice",
+  "labels": []
+}
