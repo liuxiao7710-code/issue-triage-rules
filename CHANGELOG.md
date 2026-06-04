@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Added a CI badge, example triage output, and a maintenance roadmap to the README.
+
 ## 0.1.0 - 2026-06-03
 
 - Added TOML-based triage rules.

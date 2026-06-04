@@ -1,5 +1,7 @@
 # issue-triage-rules
 
+[![CI](https://github.com/liuxiao7710-code/issue-triage-rules/actions/workflows/ci.yml/badge.svg)](https://github.com/liuxiao7710-code/issue-triage-rules/actions/workflows/ci.yml)
+
 `issue-triage-rules` labels issue payloads using plain TOML rules. It is intentionally deterministic: no network calls, no model dependency, and no surprise labels.
 
 Use it when a project wants lightweight first-pass triage for issues from GitHub Actions, bots, or local scripts.
@@ -48,6 +50,26 @@ issue-triage-rules --rules examples/rules.toml --issue examples/issue.json --exp
 issue-triage-rules --rules examples/rules.toml --issue examples/issue.json --format text
 ```
 
+Example JSON output:
+
+```json
+{
+  "labels": [
+    "bug"
+  ],
+  "results": [
+    {
+      "label": "bug",
+      "matched": true,
+      "reasons": [
+        "title contains crash",
+        "body contains stack trace"
+      ]
+    }
+  ]
+}
+```
+
 ## GitHub Actions sketch
 
 ```yaml
@@ -66,6 +88,13 @@ jobs:
       - run: python -m pip install .
       - run: issue-triage-rules --rules .github/triage-rules.toml --issue "$GITHUB_EVENT_PATH"
 ```
+
+## Maintenance roadmap
+
+- Add conditions for issue author association and changed labels.
+- Add a dry-run GitHub Actions workflow example.
+- Add fixture payloads for opened, edited, and reopened issue events.
+- Document recommended rule organization for larger projects.
 
 ## Development
 
