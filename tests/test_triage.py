@@ -29,6 +29,22 @@ class IssueTriageRulesTests(unittest.TestCase):
 
         self.assertFalse(evaluate_rule(rule, issue).matched)
 
+    def test_rule_matches_regex_conditions(self) -> None:
+        issue = {"title": "Regression in v1.2.3", "body": "trace id ABC-123", "author": "alice", "labels": []}
+        rule = {"label": "regression", "title_matches": [r"v\d+\.\d+\.\d+"], "body_matches": [r"[A-Z]{3}-\d+"], "match": "all"}
+
+        result = evaluate_rule(rule, issue)
+
+        self.assertTrue(result.matched)
+        self.assertIn("title matches", result.reasons[0])
+
+    def test_invalid_regex_reports_clear_error(self) -> None:
+        issue = {"title": "Crash", "body": "", "author": "alice", "labels": []}
+        rule = {"label": "bug", "title_matches": ["["]}
+
+        with self.assertRaisesRegex(ValueError, "Invalid regex pattern"):
+            evaluate_rule(rule, issue)
+
     def test_selected_labels_are_unique(self) -> None:
         issue = {"title": "Crash", "body": "traceback", "author": "alice", "labels": []}
         rules = [

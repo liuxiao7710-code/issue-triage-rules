@@ -29,6 +29,10 @@ author_is = ["dependabot[bot]", "renovate[bot]"]
 label = "needs-info"
 body_contains = ["to reproduce", "steps"]
 match = "all"
+
+[[rules]]
+label = "regression"
+title_matches = ["v[0-9]+\\.[0-9]+\\.[0-9]+"]
 ```
 
 ## Issue payload

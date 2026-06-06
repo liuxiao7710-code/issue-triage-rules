@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
@@ -51,7 +52,7 @@ def parse_rule_toml(text: str) -> dict[str, Any]:
 
 def parse_toml_value(value: str) -> Any:
     if value.startswith('"') and value.endswith('"'):
-        return value[1:-1]
+        return json.loads(value)
     if value in {"true", "false"}:
         return value == "true"
     if value.startswith("[") and value.endswith("]"):
@@ -94,6 +95,20 @@ def contains_any(text: str, needles: Any) -> tuple[bool, list[str]]:
     return bool(matched), matched
 
 
+def regex_any(text: str, patterns: Any) -> tuple[bool, list[str]]:
+    if not isinstance(patterns, list):
+        return False, []
+    matched: list[str] = []
+    for pattern in patterns:
+        pattern_text = str(pattern)
+        try:
+            if re.search(pattern_text, text, re.IGNORECASE):
+                matched.append(pattern_text)
+        except re.error as exc:
+            raise ValueError(f"Invalid regex pattern {pattern_text!r}: {exc}") from exc
+    return bool(matched), matched
+
+
 def author_matches(author: str, expected: Any) -> tuple[bool, list[str]]:
     if not isinstance(expected, list):
         return False, []
@@ -119,11 +134,23 @@ def evaluate_rule(rule: dict[str, Any], issue: dict[str, Any]) -> RuleResult:
     elif "title_contains" in rule:
         checks.append((False, "title did not match"))
 
+    matched, patterns = regex_any(issue["title"], rule.get("title_matches"))
+    if patterns:
+        checks.append((matched, "title matches " + ", ".join(patterns)))
+    elif "title_matches" in rule:
+        checks.append((False, "title regex did not match"))
+
     matched, words = contains_any(issue["body"], rule.get("body_contains"))
     if words:
         checks.append((matched, "body contains " + ", ".join(words)))
     elif "body_contains" in rule:
         checks.append((False, "body did not match"))
+
+    matched, patterns = regex_any(issue["body"], rule.get("body_matches"))
+    if patterns:
+        checks.append((matched, "body matches " + ", ".join(patterns)))
+    elif "body_matches" in rule:
+        checks.append((False, "body regex did not match"))
 
     matched, authors = author_matches(issue["author"], rule.get("author_is"))
     if authors:
