@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+No changes yet.
+
+## 0.1.1 - 2026-06-16
+
 - Added `title_matches` and `body_matches` regex conditions for more precise triage rules.
 - Added a CI badge, example triage output, and a maintenance roadmap to the README.
 

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "issue-triage-rules"
-version = "0.1.0"
+version = "0.1.1"
 description = "Apply deterministic TOML rules to GitHub issue payloads and return labels."
 readme = "README.md"
 requires-python = ">=3.10"
